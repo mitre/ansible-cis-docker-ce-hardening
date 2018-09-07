@@ -1,0 +1,6 @@
+---
+- hosts: aws
+  become: yes
+
+  roles:
+      - ../../cis-docker-ce

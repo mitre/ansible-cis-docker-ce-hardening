@@ -1,0 +1,7 @@
+  - name: Reload auditd Rules
+    command: service auditd restart
+
+  - name: Reload docker
+    service: 
+      name: docker 
+      state: restarted

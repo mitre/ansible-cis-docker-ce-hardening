@@ -1,0 +1,32 @@
+---
+- block:
+      - name: |
+
+            "2.1 Ensure network traffic is restricted between containers on the default bridge (Scored)"
+            "2.2 Ensure the logging level is set to 'info' (Scored)"
+            "2.3 Ensure Docker is allowed to make changes to iptables (Scored)"
+            "2.4 Ensure insecure registries are not used (Scored)"
+            "2.5 Ensure aufs storage driver is not used (Scored)"
+            "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
+            "2.7 Ensure the default ulimit is configured appropriately (Not Scored)"
+            "2.8 Enable user namespace support (Scored) (Not Implemented)"
+            "2.9 Ensure the default cgroup usage has been confirmed (Scored)"
+            "2.10 Ensure base device size is not changed until needed (Scored)"
+            "2.11 Ensure that authorization for Docker client commands is enabled (Scored) (Not Implemented)"
+            "2.12 Ensure centralized and remote logging is configured (Scored)"
+            "2.13 Ensure operations on legacy registry (v1) are Disabled (Scored)"
+            "2.14 Ensure live restore is Enabled (Scored)"
+            "2.15 Ensure Userland Proxy is Disabled (Scored)"
+            "2.16 Ensure daemon-wide custom seccomp profile is applied, if needed (Not Scored)"
+            "2.17 Ensure experimental features are avoided in production (Scored)"
+            "2.18 Ensure containers are restricted from acquiring new privileges (Scored)"
+            "Configure daemon.json to enable above settings"
+        template:
+          src: daemon.json.j2
+          dest: /etc/docker/daemon.json
+          owner: root
+          group: root
+          mode: 644
+        notify: Reload docker
+  tags:
+    - section2

@@ -1,0 +1,32 @@
+{
+	"disable-legacy-registry": true,
+	"icc": false,
+	"log-level": "info",
+	"iptables": true,
+	"tlsverify": true,
+	"tlscacert": "{{ dds_server_cert_path }}/ca.pem",
+	"tlscert": "{{ dds_server_cert_path }}/server-cert.pem",
+	"tlskey": "{{ dds_server_cert_path }}/server-key.pem",
+	"live-restore": true,
+ 	"log-driver": "syslog",
+	"log-opts": {
+    	"syslog-address": "udp://1.2.3.4:1111"
+  	},
+	"default-ulimits": {
+		"nofile": {
+			"soft":100,
+			"hard":200,
+			"name": "nofile"
+		},
+		"nproc": {
+			"soft":1024,
+			"hard":2048,
+			"name": "nproc"
+		}
+	},
+	"storage-driver": "overlay2",
+	"userland-proxy": false,
+	"experimental": false,
+	"no-new-privileges": false,
+	"selinux-enabled": true
+}
