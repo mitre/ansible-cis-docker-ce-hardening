@@ -191,7 +191,7 @@
 - name: "2.11 Ensure that authorization for Docker client commands is enabled (Scored) (Not Implemented)"
   debug:
     msg: "Default TLS authorization set by 2.6"
-  notify: Reload docker
+  when: authorization_plugins is not defined or (authorization_plugins|length==0)
   tags:
    - scored
    - section2.1

@@ -18,6 +18,8 @@ section_5: false
 
 
 config_file: /etc/docker/daemon.json
+syslog_address: ''
+authorization_plugins: []
 
 dds_system_tmp: /tmp
 dds_country: US
