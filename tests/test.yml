@@ -1,6 +1,6 @@
 ---
-- hosts: aws
+- hosts: local
   become: yes
 
   roles:
-      - ../../cis-docker-ce
+      - ../../ansible-cis-docker-ce-hardening

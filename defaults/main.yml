@@ -16,6 +16,9 @@ section_5: false
 
 # section_1: false
 
+
+config_file: /etc/docker/daemon.json
+
 dds_system_tmp: /tmp
 dds_country: US
 dds_state: Virginia

@@ -1,4 +1,4 @@
-# - name: 1.1 Ensure a separate partition for containers has been created (Scored)\
+  # - name: 1.1 Ensure a separate partition for containers has been created (Scored)\
 #   filesystem:
 #     fstype: ext4
 #     dev: /dev/xvdf
