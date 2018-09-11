@@ -46,7 +46,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.4
 
 - name: "2.5 Ensure aufs storage driver is not used (Scored)"
   debug:
@@ -54,79 +54,44 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.5
 
-# - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
-#   set_fact:
-#   jsonpatch: 
-#     file: "{{ config_file }}"
-#     key: tlsverify
-#     value: true
-#   notify: Reload docker
-  # tags:
-#    - scored
-#    - section2.1
+- block:
+    - name: Include Docker daemon configuration
+      import_tasks: tls_certs.yml
+      when: section_2 | bool
 
-# - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
-#   set_fact:
-#   jsonpatch: 
-#     file: "{{ config_file }}"
-#     key: insecure-registries
-#     value: true
-    
-#     daemon: "{{ daemon | combine(
-#       {
-#         'tlsverify': true,
-#         'tlscacert': '{{ dds_server_cert_path }}/ca.pem',
-#         'tlscert': '{{ dds_server_cert_path }}/server-cert.pem',
-#         'tlskey': '{{ dds_server_cert_path }}/server-key.pem'
-#       }
-#      ) }}"
-#   notify: Reload docker
-  # tags:
-#    - scored
-#    - section2.1
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
+      jsonpatch: 
+        file: "{{ config_file }}"
+        key: tlsverify
+        value: true
+      notify: Reload docker
 
-# - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
-#   set_fact:
-#   jsonpatch: 
-#     file: "{{ config_file }}"
-#     key: insecure-registries
-#     state: absent
-    
-#     daemon: "{{ daemon | combine(
-#       {
-#         'tlsverify': true,
-#         'tlscacert': '{{ dds_server_cert_path }}/ca.pem',
-#         'tlscert': '{{ dds_server_cert_path }}/server-cert.pem',
-#         'tlskey': '{{ dds_server_cert_path }}/server-key.pem'
-#       }
-#      ) }}"
-#   notify: Reload docker
-  # tags:
-#    - scored
-#    - section2.1
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
+      jsonpatch: 
+        file: "{{ config_file }}"
+        key: tlscacert
+        value: "{{ server_cert_path }}/{{ ca_cert }}"
+      notify: Reload docker
 
-# - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
-#   set_fact:
-#   jsonpatch: 
-#     file: "{{ config_file }}"
-#     key: insecure-registries
-#     state: absent
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
+      jsonpatch: 
+        file: "{{ config_file }}"
+        key: tlscert
+        value: "{{ server_cert_path }}/{{ server_cert }}"
+      notify: Reload docker
 
-#     daemon: "{{ daemon | combine(
-#       {
-#         'tlsverify': true,
-#         'tlscacert': '{{ dds_server_cert_path }}/ca.pem',
-#         'tlscert': '{{ dds_server_cert_path }}/server-cert.pem',
-#         'tlskey': '{{ dds_server_cert_path }}/server-key.pem'
-#       }
-#      ) }}"
-#   notify: Reload docker
-  # tags:
-#    - scored
-#    - section2.1
-
+    - name: "2.6 Ensure TLS authentication for Docker daemon is configured (Scored)"
+      jsonpatch: 
+        file: "{{ config_file }}"
+        key: tlskey
+        value: "{{ server_cert_path }}/{{ server_cert_key }}"
+      notify: Reload docker
+  when: dockerd_via_network
+  tags:
+   - scored
+   - section2.6
 
 - name: "2.7 Ensure the default ulimit is configured appropriately (Not Scored)"
   jsonpatch: 
@@ -134,30 +99,41 @@
     key: default-ulimits
     value: {
               'nofile': {
-                  'soft':100,
-                  'hard':200,
+                  'soft': "{{ default_ulimits_nofile_soft }}",
+                  'hard': "{{ default_ulimits_nofile_hard }}",
                   'name': 'nofile'
               },
               'nproc': {
-                  'soft':1024,
-                  'hard':2048,
+                  'soft': "{{ default_ulimits_nproc_soft }}",
+                  'hard': "{{ default_ulimits_nproc_hard }}",
                   'name': 'nproc'
               }
            }
   notify: Reload docker
   tags:
-   - scored
-   - section2.1
+   - not_scored
+   - section2.7
 
-# - name: "2.8 Enable user namespace support (Scored) (Not Implemented)"
+# - name: "2.8 Enable user namespace support (Scored)"
+#   lineinfile:
+#     path: "{{ item }}"
+#     line: dockremap:231072:65536
+#   with_items:
+#     - /etc/subgid
+#     - /etc/subuid
+#   tags:
+#    - scored
+#    - section2.8
+
+# - name: "2.8 Enable user namespace support (Scored)"
 #   jsonpatch: 
 #     file: "{{ config_file }}"
 #     key: userns-remap
 #     value: default
 #   notify: Reload docker
-  # tags:
+#   tags:
 #    - scored
-#    - section2.1
+#    - section2.8
 
 - name: "2.9 Ensure the default cgroup usage has been confirmed (Scored)"
   jsonpatch: 
@@ -167,7 +143,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.9
 
 - name: "2.10 Ensure base device size is not changed until needed (Scored)"
   debug:
@@ -175,7 +151,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.10
 
 - name: "2.11 Ensure that authorization for Docker client commands is enabled (Scored) (Not Implemented)"
   jsonpatch: 
@@ -186,7 +162,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.11
 
 - name: "2.11 Ensure that authorization for Docker client commands is enabled (Scored) (Not Implemented)"
   debug:
@@ -194,7 +170,7 @@
   when: authorization_plugins is not defined or (authorization_plugins|length==0)
   tags:
    - scored
-   - section2.1
+   - section2.11
 
 - name: "2.12 Ensure centralized and remote logging is configured (Scored)"
   jsonpatch: 
@@ -205,7 +181,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.12
 
 - name: "2.13 Ensure operations on legacy registry (v1) are Disabled (Scored)"
   jsonpatch: 
@@ -215,7 +191,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.13
 
 - name: "2.14 Ensure live restore is Enabled (Scored)"
   jsonpatch: 
@@ -225,7 +201,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.14
 
 - name: "2.15 Ensure Userland Proxy is Disabled (Scored)"
   jsonpatch: 
@@ -235,7 +211,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.15
 
 - name: "2.16 Ensure daemon-wide custom seccomp profile is applied, if needed (Not Scored)"
   jsonpatch: 
@@ -246,7 +222,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.16
 
 - name: "2.17 Ensure experimental features are avoided in production (Scored)"
   jsonpatch: 
@@ -256,7 +232,7 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.17
 
 - name: "2.18 Ensure containers are restricted from acquiring new privileges (Scored)"
   jsonpatch: 
@@ -266,4 +242,4 @@
   notify: Reload docker
   tags:
    - scored
-   - section2.1
+   - section2.18

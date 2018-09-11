@@ -1,24 +1,10 @@
----
-# handlers file for cis-docker-ce
 
-# - name: Check ansible version
-#   assert:
-#       that: ansible_version.full is version_compare(min_ansible_version, '>=')
-#       msg: You must use Ansible {{ min_ansible_version }} or greater
-#   tags:
-#       - always
-
-# - import_tasks: prelim.yml
-#   become: yes
-#   tags:
-#       - prelim_tasks
-
-# - name: Include Host Configuration
-#   import_tasks: section_1.yml
-#   when: section_1 | bool
-#   tags:
-#       - host_configuration
-#       - section_1
+- name: Include Host Configuration
+  import_tasks: section_1.yml
+  when: section_1 | bool
+  tags:
+      - host_configuration
+      - section_1
 
 - name: Include Docker daemon configuration
   import_tasks: section_2.yml
@@ -27,37 +13,23 @@
       - docker_daemon_configuration
       - section_2
 
-# - name: Include Docker daemon configuration files
-#   import_tasks: section_3.yml
-#   when: section_3 | bool
-#   tags:
-#       - docker_daemon_configuration_files
-#       - section_3
+- name: Include Docker daemon configuration files
+  import_tasks: section_3.yml
+  when: section_3 | bool
+  tags:
+      - docker_daemon_configuration_files
+      - section_3
 
-# - name: Include Container Images and Build File
-#   import_tasks: section_4.yml
-#   when: section_4 | bool
-#   tags:
-#       - container_images_and_build_file
-#       - section_4
+- name: Include Container Images and Build File
+  import_tasks: section_4.yml
+  when: section_4 | bool
+  tags:
+      - container_images_and_build_file
+      - section_4
 
-# - name: Include Container Runtime
-#   import_tasks: section_5.yml
-#   when: section_5 | bool
-#   tags:
-#       - container_runtime
-#       - section_5
-
-# - name: Include Docker Security Operations
-#   import_tasks: docker_security_operations.yml
-#   when: docker_security_operations | bool
-#   tags:
-#       - docker_security_operations
-#       - section_6
-
-# - name: Include Docker Swarm Configuration
-#   import_tasks: docker_swarm_configuration.yml
-#   when: docker_swarm_configuration | bool
-#   tags:
-#       - docker_swarm_configuration
-#       - section_7
+- name: Include Container Runtime
+  import_tasks: section_5.yml
+  when: section_5 | bool
+  tags:
+      - container_runtime
+      - section_5

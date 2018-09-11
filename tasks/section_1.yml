@@ -1,19 +1,8 @@
-  # - name: 1.1 Ensure a separate partition for containers has been created (Scored)\
-#   filesystem:
-#     fstype: ext4
-#     dev: /dev/xvdf
-#   mount: 
-#     path: /dev/xvdf
-#     src: /var/lib/docker #HERE
-#     opts: bind defaults,bind
-#     fstype: ext4 #HERE
-#     state: present
-#   tags:
-#    - scored
-#    - section1.1
-
-# mkfs -t ext4 /dev/xvdf
-# mount /dev/xvdf /var/lib/docker
+- name: 1.1 Ensure a separate partition for containers has been created (Scored)\
+  debug: msg="This is a manual configuration"
+  tags:
+   - not_scored
+   - section1.2
 
 - name: 1.2 Ensure the container host has been Hardened (Not Scored)
   debug: msg="Not covered by this role"
@@ -23,7 +12,7 @@
 
 - name: 1.3 Ensure Docker is up to date (Not Scored)
   yum:
-    name: docker-ce #HERE
+    name: docker-ce
     state: latest
   tags:
    - not_scored
@@ -31,10 +20,9 @@
 
 - name: 1.4 Ensure only trusted users are allowed to control Docker daemon (Scored)
   user:
-    name: "{{ item }}" #HERE
-    group: docker #HERE
-  with_items:
-    - ec2-user
+    name: "{{ item }}"
+    group: docker 
+  with_items: "{{ tursted_users }}"
   tags:
    - scored
    - section1.4
