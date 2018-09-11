@@ -1,0 +1,67 @@
+- name: 4.1 Ensure a user for the container has been created (Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - scored
+   - section4.1
+
+- name: 4.2 Ensure that containers use trusted base images (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.2
+
+- name: 4.3 Ensure unnecessary packages are not installed in the container (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.3
+
+- name: 4.4 Ensure images are scanned and rebuilt to include security patches (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.4
+
+- name: 4.5 Ensure Content trust for Docker is Enabled (Scored)
+  lineinfile:
+    path: /etc/environment
+    line: DOCKER_CONTENT_TRUST=1
+  tags:
+   - scored
+   - section4.5
+   
+- name: 4.6 Ensure HEALTHCHECK instructions have been added to the container image (Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - scored
+   - section4.6
+
+- name: 4.7 Ensure update instructions are not use alone in the Dockerfile (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.7
+
+- name: 4.8 Ensure setuid and setgid permissions are removed in the images (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.8
+
+- name: 4.9 Ensure COPY is used instead of ADD in Dockerfile (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.9
+
+- name: 4.10 Ensure secrets are not stored in Dockerfiles (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.10
+
+- name: 4.11 Ensure verified packages are only Installed (Not Scored)
+  debug: msg="This is configuration is set when containers are run"
+  tags:
+   - not_scored
+   - section4.11

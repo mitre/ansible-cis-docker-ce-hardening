@@ -1,0 +1,54 @@
+---
+# defaults file for cis-docker-ce
+
+
+section_1: true
+
+section_2: true
+
+section_3: true
+
+section_4: true
+
+section_5: true
+
+# section_6: false
+
+tursted_users:
+  - vagrant
+
+config_file: /etc/docker/daemon.json
+
+dockerd_via_network: false
+
+# Provide the following arguments if dockerd_via_network is true
+# Generate CA cert and CA Key and place it in the files directory
+
+dockerd_ip: 0.0.0.0
+dockerd_port: 2376
+
+ca_cert: ca.pem
+ca_key: ca-key.pem
+ca_key_passphrase: changeme
+
+host_ip: 10.10.10.20
+
+server_cert_path: /etc/docker/tls/server_certs
+server_cert: server-cert.pem
+server_cert_key: server-key.pem
+
+client_cert_path: /etc/docker/tls/client_certs
+client_cert: cert.pem
+client_cert_key: key.pem
+
+
+default_ulimits_nofile_soft: 100
+default_ulimits_nofile_hard: 200
+default_ulimits_nproc_soft: 1024
+default_ulimits_nproc_hard: 2048
+
+syslog_address: ''
+seccomp_profile: ''
+authorization_plugins: []
+
+

@@ -1,0 +1,105 @@
+---
+- name: Create server certificate directory
+  file:
+    state: directory
+    path: "{{ server_cert_path }}"
+
+- name: Copy CA certificate to server certificate directory
+  copy:
+    src: "{{ ca_cert }}"
+    dest: "{{ server_cert_path }}"
+    mode: 0400
+
+- name: Copy CA certificate key to server certificate directory
+  copy:
+    src: "{{ ca_key }}"
+    dest: "{{ server_cert_path }}"
+    mode: 0400
+
+- name: Generate server certificate key
+  command: "openssl genrsa -out {{ server_cert_path }}/{{ server_cert_key }} 4096"
+  args:
+    creates: "{{ server_cert_path }}/{{ server_cert_key }}"
+
+- name: Generate server certificate csr
+  command: "openssl req -subj '/CN=localhost.localdomain' -sha256 -new -key {{ server_cert_path }}/{{ server_cert_key }} -out {{ server_cert_path }}/server.csr"
+  args:
+    creates: "{{ server_cert_path }}/{{ server_cert }}"
+
+- name: "Copy cert configuration file"
+  template:
+    src: "extfile.cnf.j2"
+    dest: "/tmp/extfile.cnf"
+
+- name: Generate server certificate cert
+  command: "openssl x509 -req -days 365 -sha256 -in {{ server_cert_path }}/server.csr -CA {{ server_cert_path }}/{{ ca_cert }} -CAkey {{ server_cert_path }}/{{ ca_key }} -CAcreateserial -out {{ server_cert_path }}/{{ server_cert }} -extfile  /tmp/extfile.cnf  -passin pass:{{ ca_key_passphrase }}"
+  args:
+    creates: "{{ server_cert_path }}/{{ server_cert }}"
+
+- name: Create client certificate directory
+  file:
+    state: directory
+    path: "{{ client_cert_path }}"
+
+- name: Copy CA certificate to server certificate directory
+  copy:
+    src: "{{ ca_cert }}"
+    dest: "{{ client_cert_path }}"
+    mode: 0400
+
+- name: Generate client certificate key
+  command: "openssl genrsa -out {{ client_cert_path }}/{{ client_cert_key }} 4096"
+  args:
+    creates: "{{ client_cert_path }}/{{ client_cert_key }}"
+
+- name: Generate client certificate key
+  command: "openssl req -subj '/CN=client' -new -key {{ client_cert_path }}/{{ client_cert_key }} -out {{ client_cert_path }}/client.csr"
+  args:
+    creates: "{{ client_cert_path }}/{{ client_cert }}"
+
+- name: Add to certconfiguration file
+  lineinfile:
+    path: /tmp/extfile.cnf
+    line: 'extendedKeyUsage = clientAuth'
+
+- name: Generate client certificate key
+  command: "openssl x509 -req -days 365 -sha256 -in {{ client_cert_path }}/client.csr -CA {{ server_cert_path }}/{{ ca_cert }} -CAkey {{ server_cert_path }}/{{ ca_key }} -CAcreateserial -out {{ client_cert_path }}/{{ client_cert }} -extfile /tmp/extfile.cnf  -passin pass:{{ ca_key_passphrase }}"
+  args:
+    creates: "{{ client_cert_path }}/{{ client_cert }}"
+
+- name: Remove helper files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /tmp/extfile.cnf
+    - "{{ server_cert_path }}/server.csr"
+    - "{{ client_cert_path }}/client.csr"
+
+- name: Change cert file modes
+  file:
+    path: "{{ item }}"
+    mode: 0400
+  with_items:
+    - "{{ server_cert_path }}/{{ ca_key }}"
+    - "{{ server_cert_path }}/{{ server_cert_key }}"
+    - "{{ client_cert_path }}/{{ client_cert_key }}"
+
+- name: Change cert file modes
+  file:
+    path: "{{ item }}"
+    mode: 0444
+  with_items:
+    - "{{ server_cert_path }}/{{ ca_cert }}"
+    - "{{ server_cert_path }}/{{ server_cert }}"
+    - "{{ client_cert_path }}/{{ client_cert }}"
+
+- name: Set ENV Vars
+  lineinfile:
+    path: /etc/environment
+    line: "{{ item }}"
+  with_items:
+    - "DOCKER_TLS_VERIFY=1"
+    - "DOCKER_HOST=tcp://{{ dockerd_ip }}:{{ dockerd_port }}"
+    - "DOCKER_CERT_PATH={{ client_cert_path }}"
+  when: dockerd_via_network | bool

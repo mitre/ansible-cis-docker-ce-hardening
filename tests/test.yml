@@ -1,0 +1,6 @@
+---
+- hosts: local
+  become: yes
+
+  roles:
+      - ../../ansible-cis-docker-ce-hardening

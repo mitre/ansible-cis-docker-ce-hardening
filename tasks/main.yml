@@ -1,0 +1,35 @@
+
+- name: Include Host Configuration
+  import_tasks: section_1.yml
+  when: section_1 | bool
+  tags:
+      - host_configuration
+      - section_1
+
+- name: Include Docker daemon configuration
+  import_tasks: section_2.yml
+  when: section_2 | bool
+  tags:
+      - docker_daemon_configuration
+      - section_2
+
+- name: Include Docker daemon configuration files
+  import_tasks: section_3.yml
+  when: section_3 | bool
+  tags:
+      - docker_daemon_configuration_files
+      - section_3
+
+- name: Include Container Images and Build File
+  import_tasks: section_4.yml
+  when: section_4 | bool
+  tags:
+      - container_images_and_build_file
+      - section_4
+
+- name: Include Container Runtime
+  import_tasks: section_5.yml
+  when: section_5 | bool
+  tags:
+      - container_runtime
+      - section_5

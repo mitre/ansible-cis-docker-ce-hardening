@@ -1,53 +1,73 @@
-CIS
+ansible-cis-docker-ce-hardening
 =========
 
-This role can be used to audit or remediate a host against the Center for Internet Security (CIS) security benchmarks for docker 1.11.
-
-*Disclaimer: This project has no affiliation with CIS.  The role and its contents have not been reviewed or endorsed by CIS.*
-
+This Role configures Docker Daemon as per CIS Docker Community Edition Benchmark
+Tested with Docker 18.06
 
 Requirements
 ------------
 
-This role has no requirements or dependencies.
-This role runs on rhel-centos 6 / 7
+If you must expose the Docker daemon via a network socket, TLS authentication for the daemon need to be configured.
+
+Please Generate CA cert and CA Key and place it in the files directory and provide the following aruguments.
+
+```
+dockerd_via_network: true
+
+dockerd_ip: 0.0.0.0
+dockerd_port: 2376
+
+ca_cert: ca.pem
+ca_key: ca-key.pem
+ca_key_passphrase: changeme
+
+host_ip: 10.10.10.20
+
+server_cert_path: /etc/docker/tls/server_certs
+server_cert: server-cert.pem
+server_cert_key: server-key.pem
+
+client_cert_path: /etc/docker/tls/client_certs
+client_cert: cert.pem
+client_cert_key: key.pem
+```
 
 Role Variables
 --------------
+```
+tursted_users:
+  - vagrant
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+config_file: /etc/docker/daemon.json
 
-Dependencies
-------------
+dockerd_via_network: false
 
-*Always* run the role in check mode if you're unsure of its effects.
+default_ulimits_nofile_soft: 100
+default_ulimits_nofile_hard: 200
+default_ulimits_nproc_soft: 1024
+default_ulimits_nproc_hard: 2048
 
-Be aware that some of the default variables are set against CIS recommendations in the hopes that they will cause minimal disruption to a system.
+syslog_address: ''
+seccomp_profile: ''
+authorization_plugins: []
+```
+
+Issues
+------
+
+Control `2.8 Enable user namespace support` currently disabled since this interferes with `selinux-enabled` configuration.
 
 Example Playbook
 ----------------
 
-Playbooks can utilize the CIS role without much effort:
+Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: all
+    - hosts: servers
       roles:
-        - cis
+         - { role: username.rolename, x: 42 }
 
-The role is thoroughly tagged so that you can run certain sections or certain levels of checks:
-
-    # Test only items from section 4
-    ansible-playbook -i hosts -C playbook.yml -t section1
-
-    # Apply changes only from items in section 4, 5, and 6
-    ansible-playbook -i hosts playbook.yml -t section4,section5,section6
-
-License
--------
-
-Apache License, Version 2.0
 
 Author Information
 ------------------
 
-Tomasz Daszkiewicz 
-
+- Rony Xavier [rx294](https://github.com/rx294)
